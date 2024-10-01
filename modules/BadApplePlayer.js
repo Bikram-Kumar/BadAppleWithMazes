@@ -1,5 +1,6 @@
 import { ImageHandler } from "./ImageHandler.js";
 import { MazeManager } from "./MazeManager.js";
+import { Vector2 } from "./Vector2.js";
 
 export class BadApplePlayer {
     ctx;
@@ -16,7 +17,7 @@ export class BadApplePlayer {
     
     play () {
         console.log(this.vid);
-        this.vid.volume = 0.1;
+        this.vid.volume = 1.0;
         this.vid.playbackRate = 1.0;
         this.vid.play();
         
@@ -35,7 +36,7 @@ export class BadApplePlayer {
     
     drawFrame() {
         this.ctx.drawImage(this.vid, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.mazeManager.mask  = ImageHandler.getImageMask(ImageHandler.getImageData(this.ctx.canvas, this.mazeManager.dimension), 127);
+        this.mazeManager.mask  = ImageHandler.getImageMask(ImageHandler.getImageData(this.ctx.canvas, this.mazeManager.dimension), 10);
         if (this.mazeManager.generate() === null) return;
         
 
@@ -43,9 +44,15 @@ export class BadApplePlayer {
         this.ctx.beginPath();
 
         this.ctx.moveTo(this.factor*this.mazeManager.maze[0].x, this.factor*this.mazeManager.maze[0].y);
-
+        
         for (let i = 1; i < this.mazeManager.maze.length; i++) {
             
+            if (Vector2.getManhattanDist(this.mazeManager.maze[i-1], this.mazeManager.maze[i]) > 1) {
+                this.ctx.beginPath();
+        
+                this.ctx.moveTo(this.factor*this.mazeManager.maze[i].x, this.factor*this.mazeManager.maze[i].y);
+                continue;
+            }
             this.ctx.lineTo(this.factor*this.mazeManager.maze[i].x, this.factor*this.mazeManager.maze[i].y);
             this.ctx.stroke();
             

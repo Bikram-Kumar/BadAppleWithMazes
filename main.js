@@ -11,8 +11,8 @@ function main() {
     initialize();
 
 
-    var canvasDim = new Vector2(192, 192);
-    var mazeDim = new Vector2(32, 32);
+    var canvasDim = new Vector2(96, 96);
+    var mazeDim = new Vector2(24, 24);
     
     var ctx = document.getElementById("cnvs").getContext("2d", {willReadFrequently : true});
     ctx.canvas.width = canvasDim.x;
