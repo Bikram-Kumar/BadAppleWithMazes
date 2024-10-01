@@ -7,9 +7,12 @@ export class MazeManager {
     maze;
     
 
-    constructor (dimension, mask) {
+    constructor (dimension) {
         this.dimension = dimension;
-        this.mask = mask;
+    }
+
+    set mask (newMask) {
+        this.mask = newMask;
     }
 
     getFirstUnvisitedIndex(visited) {
@@ -28,7 +31,7 @@ export class MazeManager {
         var visited = new Array(size);
         var index = this.getFirstUnvisitedIndex(visited);
 
-        if (index == null) return;
+        if (index == null) return null;
 
         var stack = [index], neigh, node, index_n, neigh_flag;
 
@@ -61,7 +64,7 @@ export class MazeManager {
 
             if (!neigh_flag && stack.length == 0) {
                 index = this.getFirstUnvisitedIndex(visited);
-                if (index == null) return;
+                if (index == null) return true;
                 stack.push(index);
             }
 

@@ -1,6 +1,7 @@
 import {Vector2} from "./modules/Vector2.js"
 import {MazeManager} from "./modules/MazeManager.js"
 import { ImageHandler } from "./modules/ImageHandler.js";
+import { BadApplePlayer } from "./modules/BadApplePlayer.js";
 
 window.onload = main;
 
@@ -11,9 +12,9 @@ function main() {
 
 
     var canvasDim = new Vector2(192, 192);
-    var mazeDim = new Vector2(48, 48);
+    var mazeDim = new Vector2(32, 32);
     
-    var ctx = document.getElementById("cnvs").getContext("2d");
+    var ctx = document.getElementById("cnvs").getContext("2d", {willReadFrequently : true});
     ctx.canvas.width = canvasDim.x;
     ctx.canvas.height = canvasDim.y;
     
@@ -24,21 +25,6 @@ function main() {
     
     
     var factor = canvasDim.x / mazeDim.x;
-    
-    var kernelGauss = [
-        1/16,2/16,1/16,
-        2/16,4/16,2/16,
-        1/16,2/16,1/16
-    ];
-    var kernelRidge = [
-        0,-1,0,
-        -1,4,-1,
-        0,-1,0
-    ];
-    
-    
-    // imgData = ImageHandler.turnGrayscale(imgData);
-    // imgData = ImageHandler.convolve(imgData, kernelRidge);
     
     ctx.putImageData(imgData, 0, 0);
     
@@ -59,7 +45,8 @@ function main() {
     
     
     
-    var mazeManager = new MazeManager(mazeDim, mask);
+    var mazeManager = new MazeManager(mazeDim);
+    mazeManager.mask = mask;
     mazeManager.generate();
     var maze = mazeManager.maze;
     
@@ -74,7 +61,16 @@ function main() {
         ctx.stroke();
     }
 
+
+
+    ctx.canvas.addEventListener("click", () => {
+        var vid = document.getElementById("bad-apple-vid");
+        var player = new BadApplePlayer(ctx, vid, canvasDim, mazeDim);
+        player.play();
+    }, {once : true});
+
 }
+
 
 
 
