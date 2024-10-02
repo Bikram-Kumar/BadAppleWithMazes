@@ -11,8 +11,8 @@ function main() {
     initialize();
 
     // var canvasDim = new Vector2(480, 360); // 480x360
-    var canvasDim = new Vector2(960, 720); // 480x360
-    var factor = 8;
+    var canvasDim = new Vector2(480, 360); // 480x360
+    var factor = 4;
     var mazeDim = new Vector2(canvasDim.x/factor, canvasDim.y/factor);
     
     var ctx = document.getElementById("cnvs").getContext("2d", {willReadFrequently : true});

@@ -24,7 +24,7 @@ export class BadApplePlayer {
     
     play () {
         // console.log(this.vid);
-        this.vid.volume = 0.5;
+        this.vid.volume = 0.1;
         this.vid.playbackRate = 1.0;
         
         this.ctx.fillStyle = "#000000";
@@ -43,9 +43,9 @@ export class BadApplePlayer {
         });
 
 
-        this.vid.addEventListener("ended", () => {
-            self.downloadBlob();
-        });
+        // this.vid.addEventListener("ended", () => {
+        //     self.downloadBlob();
+        // });
 
 
         
