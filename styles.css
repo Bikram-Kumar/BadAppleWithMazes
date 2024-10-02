@@ -2,12 +2,12 @@ body {
     background-color: rgb(48, 48, 48);
 }
 
-img, video {
+img {
     display: none;
 }
 
 canvas {
     background-color: black;
-    width: 256px;
-    height: 256px;
+    /* width: 256px;
+    height: 256px; */
 }

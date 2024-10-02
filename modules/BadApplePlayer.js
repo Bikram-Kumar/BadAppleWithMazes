@@ -7,24 +7,33 @@ export class BadApplePlayer {
     vid;
     mazeManager;
     factor;
+    offset; // factor / 2
+    link;
+    frameCount;
+    buffer = [];
     
     constructor (ctx, vid, canvasDim, mazeDim) {
         this.ctx = ctx;
         this.vid = vid;
         this.mazeManager = new MazeManager(mazeDim);
         this.factor = canvasDim.x / mazeDim.x;
+        this.offset = this.factor / 2;
+        this.link = document.createElement('a');
+        this.frameCount = 0;
     }
     
     play () {
-        console.log(this.vid);
-        this.vid.volume = 1.0;
+        // console.log(this.vid);
+        this.vid.volume = 0.5;
         this.vid.playbackRate = 1.0;
-        this.vid.play();
         
+        this.ctx.fillStyle = "#000000";
         this.ctx.strokeStyle = "#00ff00";
-        this.ctx.lineWidth = 1;
+        this.ctx.lineWidth = this.factor / 2;
 
         var self = this;
+        
+        
         this.vid.addEventListener("play", () => {
             function step() {
                 self.drawFrame();
@@ -32,33 +41,67 @@ export class BadApplePlayer {
             }
             requestAnimationFrame(step);
         });
+
+
+        this.vid.addEventListener("ended", () => {
+            self.downloadBlob();
+        });
+
+
+        
+        
+        this.vid.play();
     }
     
     drawFrame() {
         this.ctx.drawImage(this.vid, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.mazeManager.mask  = ImageHandler.getImageMask(ImageHandler.getImageData(this.ctx.canvas, this.mazeManager.dimension), 10);
+        this.mazeManager.mask  = ImageHandler.getImageMask(ImageHandler.getImageData(this.ctx.canvas, this.mazeManager.dimension), 16);
         if (this.mazeManager.generate() === null) return;
         
 
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.beginPath();
 
-        this.ctx.moveTo(this.factor*this.mazeManager.maze[0].x, this.factor*this.mazeManager.maze[0].y);
+        this.ctx.moveTo(this.factor*this.mazeManager.maze[0].x + this.offset, this.factor*this.mazeManager.maze[0].y + this.offset);
         
         for (let i = 1; i < this.mazeManager.maze.length; i++) {
             
             if (Vector2.getManhattanDist(this.mazeManager.maze[i-1], this.mazeManager.maze[i]) > 1) {
-                this.ctx.beginPath();
         
-                this.ctx.moveTo(this.factor*this.mazeManager.maze[i].x, this.factor*this.mazeManager.maze[i].y);
+                this.ctx.moveTo(this.factor*this.mazeManager.maze[i].x + this.offset, this.factor*this.mazeManager.maze[i].y + this.offset);
                 continue;
             }
-            this.ctx.lineTo(this.factor*this.mazeManager.maze[i].x, this.factor*this.mazeManager.maze[i].y);
-            this.ctx.stroke();
+            this.ctx.lineTo(this.factor*this.mazeManager.maze[i].x + this.offset, this.factor*this.mazeManager.maze[i].y + this.offset);
             
         }
+        this.ctx.stroke();
+        // this.pushFrame();
 
     }
+
+
+    // pushes encoded base64 image in buffer
+    pushFrame() {
+        this.buffer.push(this.ctx.canvas.toDataURL());        
+    }
+
+
+    // downloads all frames as base64 encoded text 
+    downloadBlob() {
+        var blob = new Blob(this.buffer, {type: "text/text"});
+        var url = URL.createObjectURL(blob);
+        this.link.download = "BadAppleMazesFrames.txt";
+        this.link.href = url;
+        this.link.click();
+    }
+
+    // downloads each frame as png
+    // download() {
+    //     this.link.download = this.frameCount + '.png';
+    //     this.link.href = this.ctx.canvas.toDataURL();
+    //     this.link.click();
+    //     this.frameCount++;
+    // }
 
 
 

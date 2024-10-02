@@ -10,9 +10,10 @@ function main() {
 
     initialize();
 
-
-    var canvasDim = new Vector2(96, 96);
-    var mazeDim = new Vector2(24, 24);
+    // var canvasDim = new Vector2(480, 360); // 480x360
+    var canvasDim = new Vector2(960, 720); // 480x360
+    var factor = 8;
+    var mazeDim = new Vector2(canvasDim.x/factor, canvasDim.y/factor);
     
     var ctx = document.getElementById("cnvs").getContext("2d", {willReadFrequently : true});
     ctx.canvas.width = canvasDim.x;
@@ -24,13 +25,12 @@ function main() {
     var imgData = ctx.getImageData(0, 0, canvasDim.x, canvasDim.y);
     
     
-    var factor = canvasDim.x / mazeDim.x;
     
     ctx.putImageData(imgData, 0, 0);
     
     var mask = ImageHandler.getImageMask(ImageHandler.getImageData(ctx.canvas, mazeDim), 5);
     // var mask = ImageHandler.getInvertedImageMask(ImageHandler.getImageData(ctx.canvas, mazeDim), 5);
-    console.log(mask);
+    // console.log(mask);
     
     for (let i = 0; i < mask.length; i++) {
         if (mask[i]) {
@@ -52,26 +52,33 @@ function main() {
     
     ctx.clearRect(0, 0, canvasDim.x, canvasDim.y);
     ctx.strokeStyle = "#00ff00";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = factor/2;
+    var offset = ctx.lineWidth / 2;
     ctx.beginPath();
     ctx.moveTo(factor*maze[0].x, factor*maze[0].y);
-    for (let i = 1; i < maze.length; i++) {
+    for (let i = 1; i < mazeManager.maze.length; i++) {
+            
+        if (Vector2.getManhattanDist(mazeManager.maze[i-1], mazeManager.maze[i]) > 1) {
+    
+            ctx.moveTo(factor*mazeManager.maze[i].x + offset, factor*mazeManager.maze[i].y + offset);
+            continue;
+        }
+        ctx.lineTo(factor*mazeManager.maze[i].x + offset, factor*mazeManager.maze[i].y + offset);
         
-        ctx.lineTo(factor*maze[i].x, factor*maze[i].y);
-        ctx.stroke();
     }
+    ctx.stroke();
 
 
 
     ctx.canvas.addEventListener("click", () => {
+        
         var vid = document.getElementById("bad-apple-vid");
+
         var player = new BadApplePlayer(ctx, vid, canvasDim, mazeDim);
         player.play();
     }, {once : true});
 
 }
-
-
 
 
 
