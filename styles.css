@@ -6,8 +6,11 @@ img {
     display: none;
 }
 
+video {
+    /* display: none; */
+}
+
 canvas {
     background-color: black;
-    /* width: 256px;
-    height: 256px; */
+
 }

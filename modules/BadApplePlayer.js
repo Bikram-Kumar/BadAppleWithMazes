@@ -11,6 +11,7 @@ export class BadApplePlayer {
     link;
     frameCount;
     buffer = [];
+    threshold;
     
     constructor (ctx, vid, canvasDim, mazeDim) {
         this.ctx = ctx;
@@ -23,14 +24,14 @@ export class BadApplePlayer {
     }
     
     play () {
-        // console.log(this.vid);
+
         this.vid.volume = 0.1;
         this.vid.playbackRate = 1.0;
         
         this.ctx.fillStyle = "#000000";
         this.ctx.strokeStyle = "#00ff00";
         this.ctx.lineWidth = this.factor / 2;
-
+        
         var self = this;
         
         
@@ -41,21 +42,34 @@ export class BadApplePlayer {
             }
             requestAnimationFrame(step);
         });
-
-
+        
+        
+        
         // this.vid.addEventListener("ended", () => {
-        //     self.downloadBlob();
-        // });
-
-
-        
-        
-        this.vid.play();
+            //     self.downloadBlob();
+            // });
+            
+            
+            
+        self.vid.play();
+            
     }
-    
+        
     drawFrame() {
+
+        // vary thresholds for including different effects
+        if (this.vid.currentTime < 90) {
+            this.threshold = 32;
+        } else if (this.vid.currentTime < 140) {
+            this.threshold = 100;
+        } else if (this.vid.currentTime < 145) {
+            this.threshold = 4;
+        } else {
+            this.threshold = 32;
+        }
+
         this.ctx.drawImage(this.vid, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.mazeManager.mask  = ImageHandler.getImageMask(ImageHandler.getImageData(this.ctx.canvas, this.mazeManager.dimension), 16);
+        this.mazeManager.mask  = ImageHandler.getImageMask(ImageHandler.getImageData(this.ctx.canvas, this.mazeManager.dimension), this.threshold);
         if (this.mazeManager.generate() === null) return;
         
 
