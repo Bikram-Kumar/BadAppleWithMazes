@@ -21,11 +21,22 @@ export class BadApplePlayer {
         this.offset = this.factor / 2;
         this.link = document.createElement('a');
         this.frameCount = 0;
+
+        var self = this;
+        
+        this.vid.addEventListener("play", () => {
+            function step() {
+                self.drawFrame();
+                requestAnimationFrame(step);
+            }
+            self.play();
+            requestAnimationFrame(step);
+        }, {once : true});
     }
     
     play () {
 
-        this.vid.volume = 0.1;
+        this.vid.volume = 1.0;
         this.vid.playbackRate = 1.0;
         
         this.ctx.fillStyle = "#000000";
@@ -35,24 +46,13 @@ export class BadApplePlayer {
         var self = this;
         
         
-        this.vid.addEventListener("play", () => {
-            function step() {
-                self.drawFrame();
-                requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-        });
-        
         
         
         // this.vid.addEventListener("ended", () => {
             //     self.downloadBlob();
             // });
             
-            
-            
-        self.vid.play();
-            
+                        
     }
         
     drawFrame() {

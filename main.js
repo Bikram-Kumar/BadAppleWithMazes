@@ -69,14 +69,15 @@ function main() {
     ctx.stroke();
 
 
+    var vid = document.getElementById("bad-apple-vid");
+
+    var player = new BadApplePlayer(ctx, vid, canvasDim, mazeDim);
 
     ctx.canvas.addEventListener("click", () => {
-        
-        var vid = document.getElementById("bad-apple-vid");
-
-        var player = new BadApplePlayer(ctx, vid, canvasDim, mazeDim);
-        player.play();
+        player.vid.play();
     }, {once : true});
+
+
 
 }
 
